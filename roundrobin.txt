@@ -1,0 +1,76 @@
+#include <iostream>
+#include <queue>
+
+struct Process {
+    int pid;
+    int arrival_time;
+    int burst_time;
+    int remaining_time;
+};
+
+void RoundRobin(Process processes[], int n, int quantum) {
+    int total_waiting_time = 0;
+    int total_turnaround_time = 0;
+    int current_time = 0;
+
+    std::queue<int> ready_queue;
+
+    for (int i = 0; i < n; ++i) {
+        processes[i].remaining_time = processes[i].burst_time;
+        if (processes[i].arrival_time <= current_time) {
+            ready_queue.push(i);
+        }
+    }
+
+    std::cout << "Order of execution: ";
+
+    while (!ready_queue.empty()) {
+        int current_process = ready_queue.front();
+        ready_queue.pop();
+
+        std::cout << processes[current_process].pid << " ";
+
+        if (processes[current_process].remaining_time > quantum) {
+            current_time += quantum;
+            processes[current_process].remaining_time -= quantum;
+        } else {
+            current_time += processes[current_process].remaining_time;
+            total_waiting_time += current_time - processes[current_process].arrival_time - processes[current_process].burst_time;
+            total_turnaround_time += current_time - processes[current_process].arrival_time;
+            processes[current_process].remaining_time = 0;
+        }
+
+        for (int i = 0; i < n; ++i) {
+            if (processes[i].arrival_time <= current_time && processes[i].remaining_time > 0 && i != current_process) {
+                ready_queue.push(i);
+            }
+        }
+
+        if (processes[current_process].remaining_time > 0) {
+            ready_queue.push(current_process);
+        }
+    }
+
+    std::cout << "\nAverage Waiting Time: " << (double)total_waiting_time / n << std::endl;
+    std::cout << "Average Turnaround Time: " << (double)total_turnaround_time / n << std::endl;
+}
+
+int main() {
+    int n, quantum;
+    std::cout << "Enter the number of processes: ";
+    std::cin >> n;
+
+    Process processes[n];
+    std::cout << "Enter arrival time and burst time for each process:\n";
+    for (int i = 0; i < n; ++i) {
+        processes[i].pid = i + 1;
+        std::cin >> processes[i].arrival_time >> processes[i].burst_time;
+    }
+
+    std::cout << "Enter time quantum for Round Robin: ";
+    std::cin >> quantum;
+
+    RoundRobin(processes, n, quantum);
+
+    return 0;
+}
