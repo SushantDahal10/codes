@@ -1,0 +1,12 @@
+LAB Assignment 8
+Operating Systems (UCS-303)
+Instructions: The instructor is required to discuss the concept of IPC with the
+students. Students have to implement following programs.
+1. Write a program to implement producer consumer scenario using POSIX
+shared memory.
+2. Write a program to implement inter process communication between the
+parent process and the child process using ordinary Pipes.
+
+3. Write program to implement IPC through message queues.
+
+
